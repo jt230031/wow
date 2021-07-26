@@ -1,0 +1,103 @@
+<html>
+
+    <head>
+
+        <title>Mythic Dungeon Routes</title>
+
+        <script type="text/javascript">
+
+            const dungeons = {
+                "De Other Side": {
+                    "noskips": "Nt-Lztime",
+                    "skips": "Zd0LxNdnd"
+                },
+                "Halls of Attonement": {
+                    "noskips": "ImmD9xTnJ",
+                    "skips": "6AyCo4zhU"
+                },
+                "Mists of Tirna Scythe": {
+                    "default": "Zo6e0BoDs"
+                },
+                "Necrotic Wake": {
+                    "noskips": "fVnj_1bWa",
+                    "skips": "wRa3YLNDR"
+                },
+                "Plaguefall": {
+                    "noskips": "uopo5bcrP",
+                    "skips": "fUmPyMtHq"
+                },
+                "Sanguine Depths": {
+                    "noskips": "ouecTw9N3",
+                    "skips": "y_lv02bok"
+                },
+                "Spires of Ascension": {
+                    "default": "r2L9WZnR7"
+                },
+                "Theatre of Pain": {
+                    "default": "9WhnOmpMO"
+                }
+            }
+
+            function loadRoute(routeId) {
+                var routeLink = "https://wago.io/".concat(routeId).concat("/embed.html");
+                document.getElementById("map").src = routeLink;
+            }
+
+            function populateNavbarWithDungeons() {
+                var navbar = document.getElementById("navbar");
+                Object.keys(dungeons).sort().forEach( dungeonName => {
+                    var dungeon = dungeons[dungeonName];
+                    navbar.appendChild(document.createTextNode(dungeonName));
+                    navbar.appendChild(document.createElement("BR"));
+                    Object.keys(dungeons[dungeonName]).sort().forEach( routeName => {
+                        link = document.createElement('A')
+                        link.innerText = routeName;
+                        link.href = "#".concat(dungeon[routeName]);
+                        link.onclick = function() { loadRoute(dungeon[routeName]); }
+                        navbar.appendChild(link);
+                        navbar.appendChild(document.createElement("BR"));
+                    })
+                    navbar.appendChild(document.createElement("BR"));
+                });
+            }
+
+        </script>
+
+        <style>
+
+            #navbar {
+                margin: 1em;
+            }
+
+            #map {
+                flex-grow: 1;
+                border: none;
+                height: 100%;
+            }
+
+            a {
+                color: lightslategrey;
+            }
+
+            body {
+                display: flex;
+                flex-direction: row;
+            }
+
+            * {
+                margin: 0em;
+                background-color: #212121;
+                color: ghostwhite;
+                font-family: Arial;
+                font-size: small;
+            }
+
+        </style>
+
+    </head>
+    <body onload="populateNavbarWithDungeons()">
+        <nav id="navbar"></nav>
+        <iframe id="map" src=""></iframe>
+    </body>
+
+</html>
