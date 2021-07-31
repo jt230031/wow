@@ -5,60 +5,133 @@
         <title>Mythic Dungeon Routes</title>
 
         <script type="text/javascript">
-
             const dungeons = {
-                "De Other Side": {
-                    "noskips": "Nt-Lztime",
-                    "skips": "Zd0LxNdnd"
+                "2.5": {
+                    "De Other Side": {
+                        "noskips": "OjuVTxKGA",
+                        "skips": "D-Kj-AAws"
+                    },
+                    "Halls of Attonement": {
+                        "noskips": "P2hgwjM3j",
+                        "skips": "B59zIp5f1"
+                    },
+                    "Mists of Tirna Scythe": {
+                        "default": "PmFxlZ7Ti"
+                    },
+                    "Necrotic Wake": {
+                        "noskips": "9b-NhPIgD",
+                        "skips": "pNvx--5Mt"
+                    },
+                    "Plaguefall": {
+                        "noskips": "1WdLtfgD-",
+                        "skips": "Wk8IHMkAT"
+                    },
+                    "Sanguine Depths": {
+                        "noskips": "YICu0oaaY",
+                        "skips": "ImyfH0Rtw"
+                    },
+                    "Spires of Ascension": {
+                        "default": "dpqC8No6d"
+                    },
+                    "Theatre of Pain": {
+                        "default": "JSImuzszP"
+                    }
                 },
-                "Halls of Attonement": {
-                    "noskips": "ImmD9xTnJ",
-                    "skips": "6AyCo4zhU"
-                },
-                "Mists of Tirna Scythe": {
-                    "default": "Zo6e0BoDs"
-                },
-                "Necrotic Wake": {
-                    "noskips": "fVnj_1bWa",
-                    "skips": "wRa3YLNDR"
-                },
-                "Plaguefall": {
-                    "noskips": "uopo5bcrP",
-                    "skips": "fUmPyMtHq"
-                },
-                "Sanguine Depths": {
-                    "noskips": "ouecTw9N3",
-                    "skips": "y_lv02bok"
-                },
-                "Spires of Ascension": {
-                    "default": "r2L9WZnR7"
-                },
-                "Theatre of Pain": {
-                    "default": "9WhnOmpMO"
+                "2.4": {
+                    "De Other Side": {
+                        "noskips": "Nt-Lztime",
+                        "skips": "Zd0LxNdnd"
+                    },
+                    "Halls of Attonement": {
+                        "noskips": "ImmD9xTnJ",
+                        "skips": "6AyCo4zhU"
+                    },
+                    "Mists of Tirna Scythe": {
+                        "default": "Zo6e0BoDs"
+                    },
+                    "Necrotic Wake": {
+                        "noskips": "fVnj_1bWa",
+                        "skips": "wRa3YLNDR"
+                    },
+                    "Plaguefall": {
+                        "noskips": "uopo5bcrP",
+                        "skips": "fUmPyMtHq"
+                    },
+                    "Sanguine Depths": {
+                        "noskips": "ouecTw9N3",
+                        "skips": "y_lv02bok"
+                    },
+                    "Spires of Ascension": {
+                        "default": "r2L9WZnR7"
+                    },
+                    "Theatre of Pain": {
+                        "default": "9WhnOmpMO"
+                    }
                 }
-            }
+            };
 
             function loadRoute(routeId) {
                 var routeLink = "https://wago.io/".concat(routeId).concat("/embed.html");
                 document.getElementById("map").src = routeLink;
             }
 
-            function populateNavbarWithDungeons() {
-                var navbar = document.getElementById("navbar");
-                Object.keys(dungeons).sort().forEach( dungeonName => {
-                    var dungeon = dungeons[dungeonName];
-                    navbar.appendChild(document.createTextNode(dungeonName));
-                    navbar.appendChild(document.createElement("BR"));
-                    Object.keys(dungeons[dungeonName]).sort().forEach( routeName => {
-                        link = document.createElement('A')
-                        link.innerText = routeName;
-                        link.href = "#".concat(dungeon[routeName]);
-                        link.onclick = function() { loadRoute(dungeon[routeName]); }
-                        navbar.appendChild(link);
-                        navbar.appendChild(document.createElement("BR"));
-                    })
-                    navbar.appendChild(document.createElement("BR"));
+            function toggleVisibility(textElement, visibleElement) {
+                textElement.innerText = (textElement.innerText === "\u2BC8") ? "\u2BC6" : "\u2BC8";
+                visibleElement.style.display = (visibleElement.style.display === "none") ? "block" : "none";
+            }
+
+            function populateNav() {
+                document.getElementById("navbar").appendChild(populateNavWithVersions(navbar, dungeons));
+            }
+
+            function populateNavWithVersions(element, versions) {
+                var div = document.createElement("DIV");
+                Object.keys(versions).sort().reverse().forEach( version => {
+                    var contentDiv = populateNavWithDungeons(versions[version]);
+                    var headerDiv = populateNavWithSection(version, contentDiv);
+                    div.appendChild(headerDiv);
+                    div.appendChild(contentDiv);
                 });
+                return div;
+            }
+
+            function populateNavWithSection(version, contentDiv) {
+                var span = document.createElement("SPAN");
+                span.innerText = "\u2BC8";
+                span.classList.add("navHeader");
+
+                var div = document.createElement("DIV");
+                div.classList.add("navHeader");
+                div.onclick = function() { toggleVisibility(span, contentDiv) };
+                div.appendChild(span);
+                div.appendChild(document.createTextNode(version));
+                return div;
+            }
+
+            function populateNavWithDungeons(dungeons) {
+                var div = document.createElement("DIV");
+                div.style.display = "none";
+                Object.keys(dungeons).sort().forEach( dungeonName => {
+                    div.appendChild(document.createTextNode(dungeonName));
+                    div.appendChild(document.createElement("BR"));
+                    div.appendChild(populateNavWithRoutes(dungeons[dungeonName]));
+                });
+                return div;
+            }
+
+            function populateNavWithRoutes(routes) {
+                var div = document.createElement("DIV");
+                div.classList.add("navSection");
+                Object.keys(routes).sort().forEach( routeName => {
+                    var link = document.createElement("A");
+                    link.innerText = routeName;
+                    link.href = "#".concat(routes[routeName]);
+                    link.onclick = function() { loadRoute(routes[routeName]); }
+                    div.appendChild(link);
+                    div.appendChild(document.createElement("BR"));
+                });
+                div.appendChild(document.createElement("BR"));
+                return div;
             }
 
         </script>
@@ -66,7 +139,7 @@
         <style>
 
             #navbar {
-                margin: 1em;
+                width: 10em;
             }
 
             #map {
@@ -75,13 +148,26 @@
                 height: 100%;
             }
 
+            .navHeader {
+                background-color: maroon;
+            }
+
+            .navSection {
+                margin-left: 1em;
+            }
+
             a {
-                color: lightslategrey;
+                color: burlywood;
             }
 
             body {
                 display: flex;
                 flex-direction: row;
+
+            }
+
+            span {
+                margin-right: 1em;
             }
 
             * {
@@ -95,7 +181,7 @@
         </style>
 
     </head>
-    <body onload="populateNavbarWithDungeons()">
+    <body onload="populateNav()">
         <nav id="navbar"></nav>
         <iframe id="map" src=""></iframe>
     </body>
